@@ -184,36 +184,24 @@ function determineTokenValue(
 ): string {
   rawValue = rawValue.replace(/!default/g, "").replace(/!global/g, "");
 
-  const cssVars = "(var\\(([a-zA-Z0-9-_]+)\\))";
-  const scssVars = "(\\$([a-zA-Z0-9-_]+))";
-  const lessVars = "(\\@([a-zA-Z0-9-_]+))";
-
-  const vars = [!preserveCSSVars && cssVars, scssVars, lessVars].filter(
-    Boolean
-  ) as string[];
-
-  const referencedVariableResult = new RegExp(`^(${vars.join("|")})$`).exec(
-    rawValue
-  );
-
-  const referencedVariable =
-    referencedVariableResult?.[3] ||
-    referencedVariableResult?.[5] ||
-    referencedVariableResult?.[7];
-
-  if (referencedVariable) {
-    const value =
+  const regex = /\bvar\(([^)]+)\)|(\$[a-zA-Z0-9-_]+|@[a-zA-Z0-9-_]+)/g;
+  let match;
+  let replacedString = rawValue;
+  while ((match = regex.exec(rawValue)) !== null) {
+    const variableMatch = match[0];
+    const variableName = variableMatch.replace(/\(|\)|var\(|@|\$/g, "");
+    const replacement =
       declarations.find(
         (declaration) =>
-          declaration.prop === referencedVariable ||
-          declaration.prop === `$${referencedVariable}` ||
-          declaration.prop === `@${referencedVariable}`
+          declaration.prop === variableName ||
+          declaration.prop === `$${variableName}` ||
+          declaration.prop === `@${variableName}`
       )?.value || "";
 
-    return determineTokenValue(value, declarations, preserveCSSVars);
+    replacedString = replacedString.replace(variableMatch, replacement);
   }
 
-  return rawValue;
+  return replacedString;
 }
 
 async function getNodes(files: File[]): Promise<{
