@@ -287,7 +287,21 @@ import { CircleColorPresenter } from './CircleColorPresenter';
 />;
 ```
 
-Check the [demo file](https://github.com/UX-and-I/storybook-design-token/blob/v3/addon/src/stories/Introduction.mdx) for usage examples.
+### Custom filters
+
+The `filterNames` prop allows you to filter the design tokens displayed in the `DesignTokenDocBlock` by variable names. Use this to focus on a subset of tokens in your Storybook documentation.
+
+```tsx
+// colors.stories.mdx
+
+import { DesignTokenDocBlock } from 'storybook-design-token';
+
+<DesignTokenDocBlock
+  filterNames={['--b100']}
+  categoryName="Colors"
+  viewType="card"
+/>;
+```
 
 ## Browser support
 

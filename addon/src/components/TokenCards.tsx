@@ -16,6 +16,7 @@ import { ClipboardButton } from "./ClipboardButton";
 import { PresenterMapType, TokenPreview } from "./TokenPreview";
 import { TokenValue } from "./TokenValue";
 import { ToolButton } from "./ToolButton";
+import { useFilteredTokens } from "../hooks/useFilteredTokens";
 
 interface TokenCardsProps {
   categories: Category[];
@@ -24,6 +25,7 @@ interface TokenCardsProps {
   showValueColumn?: boolean;
   pageSize?: number;
   presenters?: PresenterMapType;
+  filterNames?: string[];
 }
 
 export const TokenCards = ({
@@ -33,6 +35,7 @@ export const TokenCards = ({
   showValueColumn = true,
   pageSize = 50,
   presenters,
+  filterNames,
 }: TokenCardsProps) => {
   const [tokenValueOverwrites, setTokenValueOverwrites] = useState<{
     [tokenName: string]: any;
@@ -108,14 +111,7 @@ export const TokenCards = ({
     []
   );
 
-  const tokens = useMemo(
-    () =>
-      categories.reduce(
-        (tokens, category) => [...tokens, ...category.tokens],
-        [] as Token[]
-      ),
-    [categories]
-  );
+  const tokens = useFilteredTokens(categories, filterNames);
 
   const pages = useMemo(() => Math.ceil(tokens.length / pageSize), [tokens]);
 

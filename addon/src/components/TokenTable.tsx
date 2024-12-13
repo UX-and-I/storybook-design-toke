@@ -9,6 +9,8 @@ import {
   WithTooltip,
 } from "@storybook/components";
 import { styled } from "@storybook/theming";
+import { useFilteredTokens } from "../hooks/useFilteredTokens";
+
 import { Category } from "../types/category.types";
 import { Token } from "../types/token.types";
 import { ClipboardButton } from "./ClipboardButton";
@@ -22,6 +24,7 @@ interface TokenTableProps {
   readonly?: boolean;
   showValueColumn?: boolean;
   presenters?: PresenterMapType;
+  filterNames?: string[];
 }
 
 export const TokenTable = ({
@@ -30,6 +33,7 @@ export const TokenTable = ({
   readonly,
   showValueColumn = true,
   presenters,
+  filterNames,
 }: TokenTableProps) => {
   const [tokenValueOverwrites, setTokenValueOverwrites] = useState<{
     [tokenName: string]: any;
@@ -40,14 +44,7 @@ export const TokenTable = ({
   const parentRef = useRef<HTMLDivElement | null>(null);
   const theadRef = useRef<HTMLTableSectionElement | null>(null);
 
-  const tokens = useMemo(
-    () =>
-      categories.reduce(
-        (tokens, category) => [...tokens, ...category.tokens],
-        [] as Token[]
-      ),
-    [categories]
-  );
+  const tokens = useFilteredTokens(categories, filterNames);
 
   const rowVirtualizer = useVirtual({
     size: tokens.length,

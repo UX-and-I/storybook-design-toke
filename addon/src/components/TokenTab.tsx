@@ -17,6 +17,7 @@ interface TokenTabProps {
   showSearch?: boolean;
   pageSize?: number;
   presenters?: PresenterMapType;
+  filterNames?: string[];
 }
 
 export function TokenTab({
